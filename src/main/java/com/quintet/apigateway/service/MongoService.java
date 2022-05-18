@@ -13,7 +13,6 @@ import java.util.Random;
 @Service
 @Scope(scopeName = "prototype")
 public class MongoService {
-
     public static String generateId() {
         return new ObjectId().toString();
     }

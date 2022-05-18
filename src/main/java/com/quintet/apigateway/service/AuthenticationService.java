@@ -44,6 +44,8 @@ public class AuthenticationService {
     private User realUser;
     @Autowired
     private Gson gson;
+    @Autowired
+    private UserRemoteService userRemoteService;
 
 
     public HttpServletResponse authenticateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -61,7 +63,10 @@ public class AuthenticationService {
         if(roleName.equals("user")){
             role.setId(1);
             role.setName("user");
-            var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            //For monolithic app
+            //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            /*for micro service*/
+            var user = userRemoteService.getUserByMobileNumber(userName);
             if(user != null && passwordEncoder.matches(password, user.getPassword())){
                 String authToken = jwtTokenUtils.generateToken(new ApplicationUserDetails(user),"user");
                 user.setJWTToken(authToken);
@@ -77,7 +82,10 @@ public class AuthenticationService {
         else if(roleName.equals("vendor")){
             role.setId(2);
             role.setName("vendor");
-            var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            /*for monolithic*/
+            //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            /*for micro service*/
+            var user = userRemoteService.getUserByMobileNumber(userName);
             if(user != null && passwordEncoder.matches(password, user.getPassword())){
                 String authToken = jwtTokenUtils.generateToken(new ApplicationUserDetails(user),"vendor");
                 user.setJWTToken(authToken);
@@ -94,7 +102,10 @@ public class AuthenticationService {
         else if(roleName.equals("admin")){
             role.setId(3);
             role.setName("admin");
-            var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            /*for monolithic*/
+            //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+            /*for micro service*/
+            var user = userRemoteService.getUserByMobileNumber(userName);
             if(user != null && passwordEncoder.matches(password, user.getPassword())){
                 String authToken = jwtTokenUtils.generateToken(new ApplicationUserDetails(user),"admin");
                 user.setJWTToken(authToken);
@@ -145,18 +156,27 @@ public class AuthenticationService {
             if (roleName.equals("user")) {
                 role.setId(1);
                 role.setName("user");
-                var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /* for monolithic*/
+                //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /*for micro service*/
+                var user = userRemoteService.getUserByMobileNumber(userName);
                 userDetails = new ApplicationUserDetails(user);
             } else if (roleName.equals("vendor")) {
                 role.setId(2);
                 role.setName("vendor");
-                var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /* for monolithic*/
+                //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /*for micro service*/
+                var user = userRemoteService.getUserByMobileNumber(userName);
                 userDetails = new ApplicationUserDetails(user);
             }
             else if (roleName.equals("admin")) {
                 role.setId(3);
                 role.setName("admin");
-                var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /* for monolithic*/
+                //var user = userMongoRepository.findByMobileNumberAndRolesContainsAndActiveIsTrue(userName, role);
+                /*for micro service*/
+                var user = userRemoteService.getUserByMobileNumber(userName);
                 userDetails = new ApplicationUserDetails(user);
             }
         } catch (Exception e) {
